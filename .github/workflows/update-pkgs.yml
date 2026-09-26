@@ -1,0 +1,82 @@
+name: Update packages
+on:
+  schedule:
+    # Mondays at 06:00 UTC
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  update-pkgs:
+    name: Check pkgs/ for upstream updates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          # PRs opened with the default GITHUB_TOKEN don't trigger other
+          # workflows, so required status checks would never run. Set the
+          # UPDATE_PKGS_TOKEN secret (a PAT or GitHub App token) to fix that.
+          token: ${{ secrets.UPDATE_PKGS_TOKEN || github.token }}
+      - name: Check for updates
+        id: update
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # A failed check for one package shouldn't block the others; the
+          # job is marked failed in the last step instead.
+          if ! .github/scripts/update-pkgs.sh > updates.txt; then
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+          fi
+          cat updates.txt
+          {
+            echo "summary<<EOF"
+            cat updates.txt
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+          rm updates.txt
+          if git diff --quiet -- pkgs; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Open and merge pull request
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.UPDATE_PKGS_TOKEN || github.token }}
+          SUMMARY: ${{ steps.update.outputs.summary }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          branch="update-pkgs/$(date -u +%Y-%m-%d)-${{ github.run_number }}"
+          git switch -c "$branch"
+          git add pkgs
+          git commit -m "chore(pkgs): update packages" -m "$SUMMARY"
+          git push origin "$branch"
+
+          url=$(gh pr create --base main --head "$branch" \
+            --title "chore(pkgs): update packages" --body-file - <<EOF
+          Automated weekly update of \`pkgs/\`.
+
+          \`\`\`
+          $SUMMARY
+          \`\`\`
+          EOF
+          )
+          echo "Opened $url"
+
+          # Merge once branch protection requirements pass. If auto-merge is
+          # disabled for the repo, fall back to merging immediately.
+          gh pr merge "$url" --auto --merge --delete-branch ||
+            gh pr merge "$url" --merge --delete-branch
+      - name: Fail if any package check failed
+        if: steps.update.outputs.failed == 'true'
+        run: |
+          echo "::error::One or more package update checks failed; see the 'Check for updates' step log."
+          exit 1
