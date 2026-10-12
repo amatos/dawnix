@@ -17,7 +17,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "https://www.peterborgapps.com/downloads/LingonPro10.zip";
-    hash = "sha256-A69FoylOBSSm+Ye3+f6n/ZU6OoVbd8lhe483GHDFAAg=";
+    hash = "sha256-uYDPSLRXksNN8d6DBHKfQ/BTiDsQ06ppSxPtKU053iE=";
   };
 
   nativeBuildInputs = [ unzip ];
