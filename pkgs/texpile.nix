@@ -13,7 +13,7 @@
 
 let
   pname = "texpile";
-  version = "1.3.0";
+  version = "1.4.1";
   baseUrl = "https://dl.texpile.com/v${version}";
 
   meta = {
@@ -33,7 +33,7 @@ let
 
     src = fetchurl {
       url = "${baseUrl}/Texpile-${version}.dmg";
-      hash = "sha256-U/AvWrAStKa6KSK7TCBpHBBQ6UBjioSCzudQ9N6SBm4=";
+      hash = "sha256-uiwkt81qasdxUh7uRd83+a2Bs282GWkDMCYkhy2QGhM=";
     };
 
     # hdiutil needs to mount a disk image; the Nix sandbox blocks that on Darwin.
@@ -62,7 +62,7 @@ let
 
     src = fetchurl {
       url = "${baseUrl}/Texpile-${version}.AppImage";
-      hash = "sha256-DH45U2591GShwzeTBgQuV4MyWLLsO0I4/E/Exx9lUFM=";
+      hash = "sha256-v7cFmee0cdIxw6m0Ra/JmOK/RkNpscsWJn1fvmOa9X8=";
     };
   };
 in

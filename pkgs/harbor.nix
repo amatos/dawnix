@@ -11,11 +11,11 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "harbor";
-  version = "1.8.1";
+  version = "1.8.3";
 
   src = fetchurl {
     url = "https://github.com/thsnkhn/harbor/releases/download/v${finalAttrs.version}/Harbor-${finalAttrs.version}.dmg";
-    hash = "sha256-1uQXYnFTjzMnCc8M4dy2CqujKmKTLizh3YRkmWxuQvM=";
+    hash = "sha256-ziJ8+hx0YMplLA/i7yNsetuJk0qKwoFmlPpCp4wF77k=";
   };
 
   # hdiutil needs to mount a disk image; the Nix sandbox blocks that on Darwin.
