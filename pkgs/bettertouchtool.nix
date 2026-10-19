@@ -13,12 +13,12 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "bettertouchtool";
-  version = "6.920";
-  build = "2026101205";
+  version = "6.954";
+  build = "2026101902";
 
   src = fetchurl {
     url = "https://folivora.ai/releases/btt${finalAttrs.version}-${finalAttrs.build}.zip";
-    hash = "sha256-027y7o2VcKt0yRjKnZ93zOPz/n9YUVCkbN1p+kUyQ+A=";
+    hash = "sha256-lqibSmoOap73N5z6yJCKAAHj4ZxpiJfzjpxDcNvpC00=";
   };
 
   nativeBuildInputs = [ unzip ];
