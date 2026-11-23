@@ -11,11 +11,11 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "muro";
-  version = "6.1.1";
+  version = "6.2";
 
   src = fetchurl {
     url = "https://github.com/MrRockySL/Muro/releases/download/v${finalAttrs.version}/Muro-${finalAttrs.version}.dmg";
-    hash = "sha256-fbbQnM+q/W9wPzTktW4HLdzCVq1Nm7OSfHk3UDsB+CA=";
+    hash = "sha256-ccS+KG6ZsxwtBUuKb5K5ObY9NsPkKJXnwrfbZdkqvqA=";
   };
 
   # hdiutil needs to mount a disk image; the Nix sandbox blocks that on Darwin.
